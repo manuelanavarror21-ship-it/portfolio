@@ -3,8 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import Hero from '../components/Hero.astro';
 import Section from '../components/Section.astro';
-import ProjectRow from '../components/ProjectRow.astro';
-import { projects } from '../data/projects';
+import ProjectsExplorer from '../components/ProjectsExplorer.astro';
 import { services, experience, skills, education, contact } from '../data/profile';
 
 const year = new Date().getFullYear();
@@ -18,11 +17,7 @@ const year = new Date().getFullYear();
   <main id="main">
     <Hero />
 
-    <Section id="projects" title="Selected projects">
-      <div class="projects">
-        {projects.map((project) => <ProjectRow project={project} />)}
-      </div>
-    </Section>
+    <ProjectsExplorer />
 
     <Section id="services" title="Services">
       <ul class="services">
@@ -90,12 +85,6 @@ const year = new Date().getFullYear();
 </BaseLayout>
 
 <style>
-  .projects {
-    display: flex;
-    flex-direction: column;
-    gap: clamp(72px, 9vw, 144px);
-  }
-
   .services {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
