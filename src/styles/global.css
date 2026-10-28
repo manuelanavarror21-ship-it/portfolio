@@ -19,6 +19,14 @@
   --grid-size: 45px;
   --gutter: clamp(16px, 6.6vw, 128px);
   --header-height: 52px;
+  /* Height of the fixed bottom navbar, kept clear at the end of the page. */
+  --nav-height: 91px;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --nav-height: 101px;
+  }
 }
 
 *,
@@ -29,7 +37,6 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: var(--header-height);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -40,6 +47,7 @@ html {
 
 body {
   margin: 0;
+  padding-bottom: var(--nav-height);
   background-color: var(--color-bg);
   background-image:
     linear-gradient(to right, var(--color-grid) 1px, transparent 1px),

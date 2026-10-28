@@ -1,0 +1,203 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.svg';
+
+// Fixed navbar from Manuela's Figma frames 1890-25370 (desktop) and
+// 1890-25432 (mobile). It appears once the hero is scrolled away and marks
+// the section in view. On phones the other links shrink to their initial.
+const links = [
+  { label: 'My projects', initial: 'P', href: '#projects', section: 'projects' },
+  { label: 'About me', initial: 'A', href: '#about', section: 'about' },
+  { label: 'Contact', initial: 'C', href: '#contact', section: 'contact' },
+];
+---
+
+<nav class="bottom-nav" aria-label="Sections" data-bottom-nav data-hidden>
+  <a class="bottom-nav__logo" href="#top" aria-label="Manuela Navarro, back to top">
+    <Image src={logo} alt="" width={56} height={56} />
+  </a>
+  <ul class="bottom-nav__links">
+    {
+      links.map((link) => (
+        <li>
+          <a class="bottom-nav__link" href={link.href} data-section={link.section}>
+            <span class="bottom-nav__initial" aria-hidden="true">
+              {link.initial}
+            </span>
+            <span class="bottom-nav__label">{link.label}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script>
+  const nav = document.querySelector<HTMLElement>('[data-bottom-nav]');
+  const hero = document.getElementById('top');
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.bottom-nav__link'));
+
+  // Services sits under About me, so it keeps "About me" marked.
+  const sectionToLink: Record<string, string> = {
+    projects: 'projects',
+    about: 'about',
+    services: 'about',
+    contact: 'contact',
+  };
+
+  function setCurrent(section: string) {
+    links.forEach((link) => {
+      if (link.dataset.section === section) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+  }
+
+  if (nav && hero) {
+    // Hidden while most of the hero, with its own buttons, is on screen.
+    new IntersectionObserver(
+      ([entry]) => {
+        const hidden = entry.intersectionRatio >= 0.25;
+        nav.toggleAttribute('data-hidden', hidden);
+        nav.inert = hidden;
+      },
+      { threshold: [0, 0.25, 1] },
+    ).observe(hero);
+  }
+
+  // A section counts as "in view" when it crosses the middle of the screen.
+  const sectionObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) setCurrent(sectionToLink[entry.target.id]);
+      });
+    },
+    { rootMargin: '-50% 0px -50% 0px' },
+  );
+  Object.keys(sectionToLink).forEach((id) => {
+    const section = document.getElementById(id);
+    if (section) sectionObserver.observe(section);
+  });
+  setCurrent('projects');
+</script>
+
+<style>
+  .bottom-nav {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 16px 16px 24px;
+    background: rgb(255 255 255 / 0.44);
+    backdrop-filter: blur(8px);
+    transition: transform 250ms ease, opacity 250ms ease;
+  }
+
+  .bottom-nav[data-hidden] {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+
+  @media (min-width: 640px) {
+    .bottom-nav {
+      left: 50%;
+      right: auto;
+      gap: 32px;
+      padding: 16px 24px 24px;
+      transform: translateX(-50%);
+    }
+
+    .bottom-nav[data-hidden] {
+      transform: translate(-50%, 100%);
+    }
+  }
+
+  .bottom-nav__logo {
+    flex-shrink: 0;
+  }
+
+  .bottom-nav__logo img {
+    width: 48px;
+    height: 48px;
+  }
+
+  @media (min-width: 640px) {
+    .bottom-nav__logo img {
+      width: 56px;
+      height: 56px;
+    }
+  }
+
+  .bottom-nav__links {
+    display: flex;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 640px) {
+    .bottom-nav__links {
+      gap: 32px;
+    }
+  }
+
+  .bottom-nav__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 43px;
+    padding: 16px;
+    border: 1px solid var(--color-line);
+    background: var(--color-bg);
+    font-size: 1rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease;
+  }
+
+  @media (min-width: 640px) {
+    .bottom-nav__link {
+      font-size: 1.5rem;
+    }
+  }
+
+  .bottom-nav__link:hover {
+    border-color: var(--color-ink);
+  }
+
+  .bottom-nav__link[aria-current] {
+    border-color: var(--color-ink);
+    background: var(--color-ink);
+    color: var(--color-bg);
+  }
+
+  .bottom-nav__initial {
+    display: none;
+  }
+
+  /* Phones: only the current section shows its full name. */
+  @media (max-width: 639px) {
+    .bottom-nav__link:not([aria-current]) .bottom-nav__initial {
+      display: inline;
+    }
+
+    .bottom-nav__link:not([aria-current]) .bottom-nav__label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bottom-nav,
+    .bottom-nav__link {
+      transition: none;
+    }
+  }
+</style>

@@ -4,6 +4,7 @@ import SiteHeader from '../components/SiteHeader.astro';
 import Hero from '../components/Hero.astro';
 import Section from '../components/Section.astro';
 import ProjectsExplorer from '../components/ProjectsExplorer.astro';
+import BottomNav from '../components/BottomNav.astro';
 import { services, experience, skills, education, contact } from '../data/profile';
 
 const year = new Date().getFullYear();
@@ -94,6 +95,8 @@ const year = new Date().getFullYear();
     <p class="label">© {year} Manuela Navarro</p>
     <a class="label" href="#top">Back to top</a>
   </footer>
+
+  <BottomNav />
 </BaseLayout>
 
 <style>
