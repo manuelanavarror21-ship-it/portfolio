@@ -19,19 +19,6 @@ const year = new Date().getFullYear();
 
     <ProjectsExplorer />
 
-    <Section id="services" title="Services">
-      <ul class="services">
-        {
-          services.map((service) => (
-            <li class="service">
-              <h3 class="service__title">{service.title}</h3>
-              <p class="service__text">{service.description}</p>
-            </li>
-          ))
-        }
-      </ul>
-    </Section>
-
     <Section id="about" title="About me">
       <div class="about">
         <div class="about__block">
@@ -68,6 +55,19 @@ const year = new Date().getFullYear();
           </ul>
         </div>
       </div>
+    </Section>
+
+    <Section id="services" title="Services">
+      <ul class="services">
+        {
+          services.map((service) => (
+            <li class="service">
+              <h3 class="service__title">{service.title}</h3>
+              <p class="service__text">{service.description}</p>
+            </li>
+          ))
+        }
+      </ul>
     </Section>
 
     <Section id="contact" title="Let’s work together">
