@@ -74,6 +74,18 @@ const year = new Date().getFullYear();
       <div class="contact">
         <p class="contact__lead">Tell me about your product, brand or project.</p>
         <a class="contact__email" href={`mailto:${contact.email}`}>{contact.email}</a>
+        <ul class="contact__social">
+          {
+            contact.social.map((link) => (
+              <li>
+                <a class="tab-link" href={link.href} target="_blank" rel="noopener noreferrer">
+                  {link.label}
+                  <span class="visually-hidden"> (opens in a new tab)</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
       </div>
     </Section>
   </main>
@@ -205,7 +217,7 @@ const year = new Date().getFullYear();
   }
 
   .contact__email {
-    font-size: clamp(1.5rem, 0.6rem + 3.6vw, 4rem);
+    font-size: clamp(1.125rem, 0.2rem + 4.4vw, 4rem);
     font-weight: 300;
     text-decoration: underline;
     text-decoration-thickness: 1px;
@@ -215,6 +227,31 @@ const year = new Date().getFullYear();
 
   .contact__email:hover {
     text-decoration-thickness: 2px;
+  }
+
+  .contact__social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tab-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 56px;
+    padding: 12px 16px;
+    border: 1px solid var(--color-line);
+    background: var(--color-bg);
+    font-size: clamp(1rem, 0.9rem + 0.4vw, 1.25rem);
+    text-decoration: none;
+    transition: border-color 150ms ease;
+  }
+
+  .tab-link:hover {
+    border-color: var(--color-ink);
   }
 
   .site-footer {

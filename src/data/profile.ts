@@ -48,7 +48,11 @@ export const education = [
   { period: '2014 – 2017', title: 'Graphic design degree, LCI Bogotá' },
 ];
 
+// Confirmed by Manuela on 28 Oct 2026.
 export const contact = {
-  // TODO(Manuela): confirm this is the address to publish, and add LinkedIn or a booking link.
   email: 'manuelanavarror21@gmail.com',
+  social: [
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/manuela-navarro-b44a10149/' },
+    { label: 'Instagram', href: 'https://www.instagram.com/manuelanavarro9821/' },
+  ],
 };
