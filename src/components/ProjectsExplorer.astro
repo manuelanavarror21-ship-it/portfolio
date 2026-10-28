@@ -1,0 +1,339 @@
+---
+import { Image } from 'astro:assets';
+import { projects } from '../data/projects';
+
+// Layout from Manuela's Figma mock: compact intro and project list on the left,
+// the selected project's cover on the right. Hovering, focusing or clicking a
+// project in the list shows its cover.
+const links = [
+  { label: 'My projects', href: '#projects', current: true },
+  { label: 'About me', href: '#about', current: false },
+  { label: 'Contact', href: '#contact', current: false },
+];
+---
+
+<section class="explorer" id="projects" aria-labelledby="projects-title">
+  <div class="explorer__intro">
+    <h2 id="projects-title" class="explorer__name">I’m Manuela</h2>
+    <p class="explorer__statement">
+      A designer who believes in the power of strategic thinking to create wonderful visuals and functional ideas.
+    </p>
+    <nav aria-label="Sections" class="explorer__nav">
+      {
+        links.map((link) => (
+          <a class:list={['tab-button', { 'tab-button--current': link.current }]} href={link.href} aria-current={link.current ? 'location' : undefined}>
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+
+  <div class="explorer__list" role="tablist" aria-orientation="vertical" aria-label="Projects">
+    {
+      projects.map((project, i) => (
+        <button
+          type="button"
+          class="project-tab"
+          role="tab"
+          id={`project-tab-${i}`}
+          aria-controls={`project-panel-${i}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+          data-index={i}
+        >
+          <span>{project.title}</span>
+          <svg class="project-tab__arrow" width="64" height="16" viewBox="0 0 64 16" fill="none" aria-hidden="true">
+            <path d="M0 8h62M55 1l7 7-7 7" stroke="currentColor" stroke-width="1.5"></path>
+          </svg>
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="explorer__panels">
+    {
+      projects.map((project, i) => (
+        <figure
+          class="project-panel"
+          role="tabpanel"
+          id={`project-panel-${i}`}
+          aria-labelledby={`project-tab-${i}`}
+          hidden={i !== 0}
+        >
+          <div class="project-panel__stage">
+            <Image
+              src={project.image}
+              alt={project.imageAlt}
+              widths={[640, 1280, 1920, 2560]}
+              sizes="(min-width: 1024px) 64vw, calc(100vw - 32px)"
+              loading={i === 0 ? 'eager' : 'lazy'}
+              class="project-panel__image"
+            />
+          </div>
+          <figcaption class="project-panel__meta">
+            <span class="project-panel__tags">
+              {project.tags.map((tag) => <span class="chip">{tag}</span>)}
+            </span>
+            <span class="project-panel__period">{project.period}</span>
+          </figcaption>
+        </figure>
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.project-tab'));
+  const panels = Array.from(document.querySelectorAll<HTMLElement>('.project-panel'));
+
+  function select(index: number, focus = false) {
+    tabs.forEach((tab, i) => {
+      const active = i === index;
+      tab.setAttribute('aria-selected', String(active));
+      tab.tabIndex = active ? 0 : -1;
+      panels[i].hidden = !active;
+    });
+    if (focus) tabs[index].focus();
+  }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => select(i));
+    tab.addEventListener('focus', () => select(i));
+    tab.addEventListener('mouseenter', () => {
+      if (window.matchMedia('(hover: hover)').matches) select(i);
+    });
+    tab.addEventListener('keydown', (event) => {
+      const last = tabs.length - 1;
+      const next: Record<string, number> = {
+        ArrowDown: i === last ? 0 : i + 1,
+        ArrowUp: i === 0 ? last : i - 1,
+        Home: 0,
+        End: last,
+      };
+      if (event.key in next) {
+        event.preventDefault();
+        select(next[event.key], true);
+      }
+    });
+  });
+</script>
+
+<style>
+  .explorer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'intro'
+      'panels'
+      'list';
+    gap: 32px;
+    padding: 40px 16px 64px;
+  }
+
+  @media (min-width: 1024px) {
+    .explorer {
+      grid-template-columns: minmax(320px, 450px) minmax(0, 1fr);
+      grid-template-areas:
+        'intro panels'
+        'list panels';
+      grid-template-rows: auto 1fr;
+      column-gap: clamp(32px, 3.5vw, 52px);
+      row-gap: 28px;
+      height: calc(100svh - var(--header-height));
+      min-height: 640px;
+      padding: 56px clamp(24px, 3.5vw, 50px) 80px;
+    }
+  }
+
+  .explorer__intro {
+    grid-area: intro;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .explorer__name {
+    font-size: clamp(1.75rem, 1.5rem + 0.8vw, 2.25rem);
+    font-weight: 600;
+  }
+
+  .explorer__statement {
+    max-width: 30ch;
+    font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
+    font-weight: 300;
+    line-height: 1.25;
+    color: var(--color-ink-soft);
+  }
+
+  @media (min-width: 1024px) {
+    .explorer__statement {
+      max-width: 34ch;
+    }
+  }
+
+  .explorer__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    padding-top: 8px;
+  }
+
+  .tab-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 56px;
+    padding: 12px 16px;
+    border: 1px solid var(--color-line);
+    background: var(--color-bg);
+    font-size: clamp(1rem, 0.9rem + 0.4vw, 1.25rem);
+    white-space: nowrap;
+    text-decoration: none;
+    transition: border-color 150ms ease;
+  }
+
+  .tab-button:hover {
+    border-color: var(--color-ink);
+  }
+
+  .tab-button--current {
+    border-color: var(--color-ink);
+    background: var(--color-ink);
+    color: var(--color-bg);
+  }
+
+  /* The list scrolls on its own, so the selected cover stays in view. */
+  .explorer__list {
+    grid-area: list;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-height: min(50svh, 336px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line) transparent;
+  }
+
+  @media (min-width: 1024px) {
+    .explorer__list {
+      max-height: none;
+    }
+  }
+
+  .project-tab {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 64px;
+    padding: 12px 18px;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: clamp(1.25rem, 1.1rem + 0.4vw, 1.5rem);
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+
+  @media (min-width: 1024px) {
+    .project-tab {
+      min-height: 82px;
+    }
+  }
+
+  .project-tab__arrow {
+    flex-shrink: 0;
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 150ms ease, transform 150ms ease;
+  }
+
+  .project-tab[aria-selected='true'] {
+    background: var(--color-ink);
+    color: var(--color-bg);
+  }
+
+  .project-tab[aria-selected='true'] .project-tab__arrow {
+    opacity: 1;
+    transform: none;
+  }
+
+  .explorer__panels {
+    grid-area: panels;
+    min-width: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .explorer__panels {
+      padding-top: 104px;
+    }
+  }
+
+  .project-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin: 0;
+  }
+
+  .project-panel[hidden] {
+    display: none;
+  }
+
+  .project-panel__stage {
+    aspect-ratio: 16 / 9;
+    max-width: 100%;
+    overflow: hidden;
+    background: var(--color-ink);
+  }
+
+  .project-panel__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .project-panel__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+  }
+
+  .project-panel__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip,
+  .project-panel__period {
+    font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1.125rem);
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .chip {
+    padding: 6px 10px;
+    background: #e3e3e3;
+  }
+
+  .project-panel__period {
+    color: var(--color-ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tab-button,
+    .project-tab,
+    .project-tab__arrow {
+      transition: none;
+    }
+  }
+</style>
