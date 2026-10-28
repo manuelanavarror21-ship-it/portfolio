@@ -1,6 +1,8 @@
 ---
 import { Image } from 'astro:assets';
-import { projects } from '../data/projects';
+import { getProjects, formatPeriod } from '../lib/projects';
+
+const projects = await getProjects();
 
 // Layout from Manuela's Figma frames 1886-22934 (desktop) and 1886-23784 (mobile):
 // the project list on the left, the selected project's cover on the right.
@@ -12,7 +14,7 @@ import { projects } from '../data/projects';
 
   <div class="explorer__list" role="tablist" aria-orientation="vertical" aria-label="Projects">
     {
-      projects.map((project, i) => (
+      projects.map(({ data: project }, i) => (
         <button
           type="button"
           class="project-tab"
@@ -34,7 +36,7 @@ import { projects } from '../data/projects';
 
   <div class="explorer__panels">
     {
-      projects.map((project, i) => (
+      projects.map(({ data: project }, i) => (
         <figure
           class="project-panel"
           role="tabpanel"
@@ -44,8 +46,8 @@ import { projects } from '../data/projects';
         >
           <div class="project-panel__stage">
             <Image
-              src={project.image}
-              alt={project.imageAlt}
+              src={project.cover}
+              alt={project.coverAlt}
               widths={[640, 1280, 1920, 2560]}
               sizes="(min-width: 1024px) 64vw, calc(100vw - 32px)"
               loading={i === 0 ? 'eager' : 'lazy'}
@@ -54,9 +56,9 @@ import { projects } from '../data/projects';
           </div>
           <figcaption class="project-panel__meta">
             <span class="project-panel__tags">
-              {project.tags.map((tag) => <span class="chip">{tag}</span>)}
+              {project.badges.map((badge) => <span class="chip">{badge}</span>)}
             </span>
-            <span class="project-panel__period">{project.period}</span>
+            <span class="project-panel__period">{formatPeriod(project)}</span>
           </figcaption>
         </figure>
       ))
