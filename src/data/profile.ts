@@ -1,5 +1,5 @@
 // Facts taken from Manuela's CV frame in Figma (node 285-3970).
-// Service descriptions are drafts for Manuela to edit.
+// Service descriptions approved by Manuela on 28 Oct 2026.
 
 export const services = [
   {
