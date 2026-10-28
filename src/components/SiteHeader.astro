@@ -1,0 +1,87 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+---
+
+<header class="site-header">
+  <a class="brand" href="#top" aria-label="Manuela Navarro, back to top">
+    <Image src={logo} alt="" width={44} height={44} class="brand__logo" />
+    <span class="label brand__name">Manuela Navarro</span>
+    <span class="label brand__divider" aria-hidden="true">|</span>
+    <span class="label brand__role">Product designer</span>
+  </a>
+  <p class="label clock">
+    Barcelona <time data-barcelona-clock>&nbsp;</time>
+  </p>
+</header>
+
+<script>
+  // Live local time in Barcelona, independent of the visitor's own time zone.
+  const clock = document.querySelector<HTMLTimeElement>('[data-barcelona-clock]');
+  const format = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Madrid',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  function tick() {
+    if (!clock) return;
+    const now = new Date();
+    clock.textContent = format.format(now);
+    clock.dateTime = now.toISOString();
+  }
+
+  tick();
+  setInterval(tick, 15_000);
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: var(--header-height);
+    padding: 4px 24px;
+    background: color-mix(in srgb, var(--color-bg) 92%, transparent);
+    backdrop-filter: blur(6px);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    text-decoration: none;
+  }
+
+  .brand__logo {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+  }
+
+  .clock {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 640px) {
+    .site-header {
+      padding-inline: 16px;
+    }
+
+    .brand__divider,
+    .brand__role {
+      display: none;
+    }
+
+    .label {
+      font-size: 0.8125rem;
+      letter-spacing: 0.14em;
+    }
+  }
+</style>

@@ -1,0 +1,121 @@
+---
+const links = [
+  { label: 'My projects', href: '#projects' },
+  { label: 'About me', href: '#about' },
+  { label: 'Contact', href: '#contact' },
+];
+---
+
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <h1 id="hero-title" class="hero__name">
+    <span>Hi!</span>
+    <span>I’m Manuela</span>
+  </h1>
+  <p class="hero__statement">
+    A designer who believes in the power of strategic thinking to create wonderful visuals and functional ideas.
+  </p>
+  <nav aria-label="Sections">
+    <ul class="hero__links">
+      {
+        links.map((link) => (
+          <li>
+            <a class="button" href={link.href}>
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+  <a class="scroll-down" href="#projects" aria-label="Scroll to projects">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M4 7.5 10 13.5 16 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+  </a>
+</section>
+
+<style>
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: clamp(40px, 5vw, 84px);
+    min-height: calc(100svh - var(--header-height));
+    padding: 64px var(--gutter);
+  }
+
+  .hero__name {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.33em;
+    font-size: var(--text-name);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  .hero__statement {
+    max-width: 26ch;
+    font-size: var(--text-statement);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--color-ink-soft);
+    text-wrap: balance;
+  }
+
+  @media (min-width: 900px) {
+    .hero__statement {
+      max-width: 34ch;
+    }
+  }
+
+  .hero__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px clamp(16px, 2vw, 34px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 12px 16px;
+    border: 1px solid var(--color-line);
+    background: var(--color-bg);
+    font-size: var(--text-button);
+    text-decoration: none;
+    transition: border-color 150ms ease, background-color 150ms ease;
+  }
+
+  .button:hover {
+    border-color: var(--color-ink);
+  }
+
+  .scroll-down {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border: 1px solid var(--color-ink);
+    border-radius: 50%;
+    background: var(--color-bg);
+    transition: transform 200ms ease;
+  }
+
+  .scroll-down:hover {
+    transform: translateY(3px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .button,
+    .scroll-down {
+      transition: none;
+    }
+  }
+</style>
