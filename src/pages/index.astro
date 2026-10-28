@@ -4,6 +4,7 @@ import SiteHeader from '../components/SiteHeader.astro';
 import Hero from '../components/Hero.astro';
 import Section from '../components/Section.astro';
 import ProjectsExplorer from '../components/ProjectsExplorer.astro';
+import BottomNav from '../components/BottomNav.astro';
 import { services, experience, skills, education, contact } from '../data/profile';
 
 const year = new Date().getFullYear();
@@ -18,19 +19,6 @@ const year = new Date().getFullYear();
     <Hero />
 
     <ProjectsExplorer />
-
-    <Section id="services" title="Services">
-      <ul class="services">
-        {
-          services.map((service) => (
-            <li class="service">
-              <h3 class="service__title">{service.title}</h3>
-              <p class="service__text">{service.description}</p>
-            </li>
-          ))
-        }
-      </ul>
-    </Section>
 
     <Section id="about" title="About me">
       <div class="about">
@@ -70,6 +58,19 @@ const year = new Date().getFullYear();
       </div>
     </Section>
 
+    <Section id="services" title="Services">
+      <ul class="services">
+        {
+          services.map((service) => (
+            <li class="service">
+              <h3 class="service__title">{service.title}</h3>
+              <p class="service__text">{service.description}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </Section>
+
     <Section id="contact" title="Let’s work together">
       <div class="contact">
         <p class="contact__lead">Tell me about your product, brand or project.</p>
@@ -94,6 +95,8 @@ const year = new Date().getFullYear();
     <p class="label">© {year} Manuela Navarro</p>
     <a class="label" href="#top">Back to top</a>
   </footer>
+
+  <BottomNav />
 </BaseLayout>
 
 <style>
