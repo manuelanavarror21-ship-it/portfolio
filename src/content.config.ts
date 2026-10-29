@@ -22,14 +22,14 @@ const projects = defineCollection({
         start: z.number().int(),
         // A year, or "current" for ongoing work. Leave it out for a single-year project.
         end: z.union([z.number().int(), z.literal('current')]).optional(),
-        // One line under the cover on the homepage.
+        // One sentence for search results and link previews.
         summary: z.string(),
         cover: image(),
         coverAlt: z.string(),
         // Optional link to the live product or site.
         link: z.url().optional(),
         media: z.array(media).default([]),
-        // A draft shows on the homepage but gets no page until it has its images.
+        // A draft has a hidden page (not linked or indexed) until it has its images.
         draft: z.boolean().default(false),
       })
       .refine((project) => project.draft || project.media.length >= 5, {
