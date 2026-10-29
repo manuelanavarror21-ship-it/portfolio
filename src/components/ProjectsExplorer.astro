@@ -1,10 +1,13 @@
 ---
 import { Image } from 'astro:assets';
-import { projects } from '../data/projects';
+import { getProjects, formatPeriod, projectUrl } from '../lib/projects';
+
+const projects = await getProjects();
 
 // Layout from Manuela's Figma frames 1886-22934 (desktop) and 1886-23784 (mobile):
 // the project list on the left, the selected project's cover on the right.
-// Hovering, focusing or clicking a project in the list shows its cover.
+// Hovering, focusing or clicking a project in the list shows its cover, and the
+// cover links to the project's page once it is no longer a draft.
 ---
 
 <section class="explorer" id="projects" aria-labelledby="projects-title">
@@ -12,7 +15,7 @@ import { projects } from '../data/projects';
 
   <div class="explorer__list" role="tablist" aria-orientation="vertical" aria-label="Projects">
     {
-      projects.map((project, i) => (
+      projects.map(({ data: project }, i) => (
         <button
           type="button"
           class="project-tab"
@@ -34,32 +37,37 @@ import { projects } from '../data/projects';
 
   <div class="explorer__panels">
     {
-      projects.map((project, i) => (
-        <figure
-          class="project-panel"
-          role="tabpanel"
-          id={`project-panel-${i}`}
-          aria-labelledby={`project-tab-${i}`}
-          hidden={i !== 0}
-        >
-          <div class="project-panel__stage">
-            <Image
-              src={project.image}
-              alt={project.imageAlt}
-              widths={[640, 1280, 1920, 2560]}
-              sizes="(min-width: 1024px) 64vw, calc(100vw - 32px)"
-              loading={i === 0 ? 'eager' : 'lazy'}
-              class="project-panel__image"
-            />
-          </div>
-          <figcaption class="project-panel__meta">
-            <span class="project-panel__tags">
-              {project.tags.map((tag) => <span class="chip">{tag}</span>)}
-            </span>
-            <span class="project-panel__period">{project.period}</span>
-          </figcaption>
-        </figure>
-      ))
+      projects.map((entry, i) => {
+        const project = entry.data;
+        const Stage = project.draft ? 'div' : 'a';
+        const link = project.draft ? {} : { href: projectUrl(entry), 'aria-label': `View the ${project.title} project` };
+        return (
+          <figure
+            class="project-panel"
+            role="tabpanel"
+            id={`project-panel-${i}`}
+            aria-labelledby={`project-tab-${i}`}
+            hidden={i !== 0}
+          >
+            <Stage class="project-panel__stage" {...link}>
+              <Image
+                src={project.cover}
+                alt={project.coverAlt}
+                widths={[640, 1280, 1920, 2560]}
+                sizes="(min-width: 1024px) 64vw, calc(100vw - 32px)"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                class="project-panel__image"
+              />
+            </Stage>
+            <figcaption class="project-panel__meta">
+              <span class="project-panel__tags">
+                {project.badges.map((badge) => <span class="chip">{badge}</span>)}
+              </span>
+              <span class="project-panel__period">{formatPeriod(project)}</span>
+            </figcaption>
+          </figure>
+        );
+      })
     }
   </div>
 </section>
@@ -209,6 +217,7 @@ import { projects } from '../data/projects';
   }
 
   .project-panel__stage {
+    display: block;
     aspect-ratio: 16 / 9;
     max-width: 100%;
     overflow: hidden;
